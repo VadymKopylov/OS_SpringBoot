@@ -1,12 +1,12 @@
-package com.kopylov.onlineshoponspringboot;
+package com.kopylov.springbootonlineshop;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OnlineShopOnSpringBootApplication {
+public class SpringBootOnlineShop {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OnlineShopOnSpringBootApplication.class, args);
+		SpringApplication.run(SpringBootOnlineShop.class, args);
 	}
 }

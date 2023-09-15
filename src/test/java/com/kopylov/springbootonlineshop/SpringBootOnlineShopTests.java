@@ -1,10 +1,10 @@
-package com.kopylov.onlineshoponspringboot;
+package com.kopylov.springbootonlineshop;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class OnlineShopOnSpringBootApplicationTests {
+class SpringBootOnlineShopTests {
 
 	@Test
 	void contextLoads() {
