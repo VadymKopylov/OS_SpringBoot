@@ -40,7 +40,6 @@ public class JdbcProductsDao implements ProductsDao {
     private static final BeanPropertyRowMapper<Product> PROPERTY_ROW_MAPPER = new BeanPropertyRowMapper<>(Product.class);
 
     private final JdbcTemplate jdbcTemplate;
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public List<Product> findAll() {
         return jdbcTemplate.query(SELECT_ALL_PRODUCTS_SQL, PROPERTY_ROW_MAPPER);

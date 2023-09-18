@@ -4,11 +4,13 @@ import com.kopylov.springbootonlineshop.dto.ProductDto;
 import com.kopylov.springbootonlineshop.exceptions.ProductNotFoundException;
 import com.kopylov.springbootonlineshop.model.Product;
 import com.kopylov.springbootonlineshop.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -23,8 +25,11 @@ public class ProductController {
 
     @GetMapping("")
     public ResponseEntity<List<Product>> getProducts(@RequestParam(value = "sort", required = false) String sort) {
-        List<Product> productList = productService.findAll(sort);
-        return new ResponseEntity<>(productList, HttpStatus.OK);
+        List<Product> allProducts = productService.findAll(sort);
+        if (allProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(productService.findAll(sort));
     }
 
     @GetMapping(params = "search")
@@ -41,28 +46,35 @@ public class ProductController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ProductDto> add(@RequestBody ProductDto productDto) {
-        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
+    public ResponseEntity<ProductDto> add(@RequestBody @Valid ProductDto productDto) {
+        ProductDto createdProduct = productService.createProduct(productDto);
+        URI uri = URI.create("/create/" + createdProduct.getId());
+        return ResponseEntity.created(uri).body(createdProduct);
+        //return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getById(@PathVariable long id) {
-        try{
-            ProductDto productById = productService.getById(id);
-            return ResponseEntity.ok(productById);
-        }catch (ProductNotFoundException e ){
+        try {
+            return ResponseEntity.ok(productService.getById(id));
+        } catch (ProductNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<ProductDto> update(@RequestBody ProductDto productDto, @PathVariable long id) {
-        return ResponseEntity.ok(productService.update(id,productDto));
+    public ResponseEntity<ProductDto> update(@PathVariable long id, @RequestBody @Valid ProductDto productDto) {
+        try{
+            ProductDto updatedProduct = productService.update(id, productDto);
+            return ResponseEntity.ok(updatedProduct);
+        }catch (ProductNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> delete(@PathVariable("id") long id) {
         productService.delete(id);
-        return new ResponseEntity<>("Product delete",HttpStatus.OK);
+        return new ResponseEntity<>("Product delete", HttpStatus.OK);
     }
 }
